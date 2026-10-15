@@ -67,8 +67,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     #envelope-screen.hide { 
-      opacity: 0; 
-      visibility: hidden; 
+      opacity: 0 !important; 
+      visibility: hidden !important; 
       pointer-events: none !important; 
     }
 
@@ -263,8 +263,8 @@
     
     <!-- ĐƯỜNG DẪN FILE NHẠC TỐI ƯU CHO GITHUB PAGES -->
     <audio id="bgAudio" loop preload="auto">
-      <source src="./music/music.mp3" type="audio/mpeg">
       <source src="music/music.mp3" type="audio/mpeg">
+      <source src="./music/music.mp3" type="audio/mpeg">
     </audio>
   </div>
 
@@ -355,7 +355,6 @@
       const mainOpenBtn = document.getElementById('mainOpenBtn');
       let isOpened = false;
 
-      // Hàm xử lý mở thư và phát nhạc đồng bộ ngay từ thao tác chạm đầu tiên
       function executeOpenEnvelope(e) {
         if (e) {
           e.preventDefault();
@@ -364,67 +363,75 @@
         if (isOpened) return;
         isOpened = true;
 
-        bgAudio.volume = parseFloat(volumeControl.value || 0.7);
-        
-        // Gọi play trực tiếp đồng bộ với click/tap của người dùng
-        const playPromise = bgAudio.play();
-
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-            vinylDisk.classList.add('spinning');
-          }).catch(err => {
-            console.log("Xác nhận Autoplay:", err);
-          });
+        // Phát nhạc ngay khi chạm
+        if (bgAudio) {
+          bgAudio.volume = parseFloat(volumeControl.value || 0.7);
+          const playPromise = bgAudio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              if (playPauseBtn) playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+              if (vinylDisk) vinylDisk.classList.add('spinning');
+            }).catch(err => {
+              console.log("Xác nhận Autoplay:", err);
+            });
+          }
         }
 
-        envelopeScreen.classList.add('hide');
+        // Ẩn màn hình phong thư
+        if (envelopeScreen) {
+          envelopeScreen.classList.add('hide');
+        }
       }
 
-      mainOpenBtn.addEventListener('click', executeOpenEnvelope);
-      envelopeScreen.addEventListener('click', executeOpenEnvelope);
+      if (mainOpenBtn) mainOpenBtn.addEventListener('click', executeOpenEnvelope);
+      if (envelopeScreen) envelopeScreen.addEventListener('click', executeOpenEnvelope);
 
-      // Điều khiển Nút Play / Pause
-      playPauseBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!bgAudio.paused) {
-          bgAudio.pause();
-          playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-          vinylDisk.classList.remove('spinning');
-        } else {
-          bgAudio.play().then(() => {
-            playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-            vinylDisk.classList.add('spinning');
-          });
-        }
-      });
+      if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!bgAudio.paused) {
+            bgAudio.pause();
+            playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            if (vinylDisk) vinylDisk.classList.remove('spinning');
+          } else {
+            bgAudio.play().then(() => {
+              playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+              if (vinylDisk) vinylDisk.classList.add('spinning');
+            });
+          }
+        });
+      }
 
-      // Điều chỉnh âm lượng
-      volumeControl.addEventListener('input', (e) => {
-        bgAudio.volume = e.target.value;
-      });
+      if (volumeControl) {
+        volumeControl.addEventListener('input', (e) => {
+          if (bgAudio) bgAudio.volume = e.target.value;
+        });
+      }
 
-      // Modal Phóng to ảnh
       const imgModal = document.getElementById('imgModal');
       const modalFullImg = document.getElementById('modalFullImg');
       const closeModalBtn = document.getElementById('closeModalBtn');
 
       document.addEventListener('click', (e) => {
         if (e.target.tagName === 'IMG' && e.target.id !== 'modalFullImg') {
-          modalFullImg.src = e.target.src;
-          imgModal.classList.add('show');
+          if (modalFullImg) modalFullImg.src = e.target.src;
+          if (imgModal) imgModal.classList.add('show');
         }
       });
 
-      closeModalBtn.addEventListener('click', () => {
-        imgModal.classList.remove('show');
-      });
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+          if (imgModal) imgModal.classList.remove('show');
+        });
+      }
 
-      imgModal.addEventListener('click', (e) => {
-        if (e.target === imgModal) {
-          imgModal.classList.remove('show');
-        }
-      });
+      if (imgModal) {
+        imgModal.addEventListener('click', (e) => {
+          if (e.target === imgModal) {
+            imgModal.classList.remove('show');
+          }
+        });
+      }
     });
 
     function smartJfifFix(img, name) {

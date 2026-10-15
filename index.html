@@ -261,9 +261,9 @@
     <button class="audio-controls-btn" id="playPauseBtn" title="Phát/Tạm dừng"><i class="fa-solid fa-play"></i></button>
     <input type="range" class="volume-slider" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
     
-    <!-- FILE NHẠC TỪ YÊU CẦU -->
+    <!-- ĐƯỜNG DẪN FILE NHẠC TỐI ƯU CHO GITHUB PAGES -->
     <audio id="bgAudio" loop preload="auto">
-      <source src="music/input_file_0.png" type="audio/mpeg">
+      <source src="./music/music.mp3" type="audio/mpeg">
       <source src="music/music.mp3" type="audio/mpeg">
     </audio>
   </div>
@@ -355,6 +355,7 @@
       const mainOpenBtn = document.getElementById('mainOpenBtn');
       let isOpened = false;
 
+      // Hàm xử lý mở thư và phát nhạc đồng bộ ngay từ thao tác chạm đầu tiên
       function executeOpenEnvelope(e) {
         if (e) {
           e.preventDefault();
@@ -364,6 +365,8 @@
         isOpened = true;
 
         bgAudio.volume = parseFloat(volumeControl.value || 0.7);
+        
+        // Gọi play trực tiếp đồng bộ với click/tap của người dùng
         const playPromise = bgAudio.play();
 
         if (playPromise !== undefined) {
@@ -381,6 +384,7 @@
       mainOpenBtn.addEventListener('click', executeOpenEnvelope);
       envelopeScreen.addEventListener('click', executeOpenEnvelope);
 
+      // Điều khiển Nút Play / Pause
       playPauseBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (!bgAudio.paused) {
@@ -395,10 +399,12 @@
         }
       });
 
+      // Điều chỉnh âm lượng
       volumeControl.addEventListener('input', (e) => {
         bgAudio.volume = e.target.value;
       });
 
+      // Modal Phóng to ảnh
       const imgModal = document.getElementById('imgModal');
       const modalFullImg = document.getElementById('modalFullImg');
       const closeModalBtn = document.getElementById('closeModalBtn');
